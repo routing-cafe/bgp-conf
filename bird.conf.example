@@ -1,0 +1,69 @@
+router id 94.26.24.1;
+
+define MY_ASN = 207487;
+
+protocol device {
+	scan time 10;
+}
+
+protocol kernel {
+	scan time 60;
+	ipv4 {
+		import none;
+		export filter {
+			if source = RTS_STATIC then reject;
+			if source = RTS_BGP then krt_prefsrc = 94.26.24.1;
+			accept;
+		};
+	};
+}
+
+protocol kernel {
+	scan time 60;
+	ipv6 {
+		import none;
+		export filter {
+			if source = RTS_STATIC then reject;
+			if source = RTS_BGP then krt_prefsrc = 2a14:14c0::1;
+			accept;
+		};
+	};
+}
+
+protocol static node_v4 {
+	ipv4;
+	route 94.26.24.0/24 unreachable;
+}
+
+protocol static node_v6 {
+	ipv6;
+	route 2a14:14c0::/48 reject;
+}
+
+include "bgp_helper.conf";
+include "filter_irr.conf";
+include "prefix_limits.conf";
+
+protocol rpki {
+	roa4 { table rpki4; };
+	roa6 { table rpki6; };
+	aspa { table aspas; };
+	transport tcp;
+	remote "127.0.0.1" port 3323;
+	retry keep 90;
+	refresh keep 900;
+	expire keep 172800;
+}
+
+protocol bgp snek_v6 {
+	local 2a14:14c0::1 as MY_ASN;
+	neighbor 2a14:14c0::128 as 18607;
+	default bgp_local_pref 120;
+	graceful restart on;
+
+	ipv6 {
+		import table on;
+		import where import_downstream(18607, IRR_SNEK_V6, IRR_SNEK_ASN);
+		export where export_to_downstream();
+	};
+}
