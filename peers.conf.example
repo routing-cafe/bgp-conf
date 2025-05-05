@@ -1,0 +1,13 @@
+protocol bgp snek_v6 {
+	local 2a14:14c0::1 as MY_ASN;
+	neighbor 2a14:14c0::128 as 18607;
+	default bgp_local_pref 120;
+	graceful restart on;
+
+	ipv6 {
+		import table on;
+		import where import_downstream(18607, IRR_SNEK_V6, IRR_SNEK_ASN);
+		export where export_to_downstream();
+	};
+}
+

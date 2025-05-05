@@ -1,0 +1,17 @@
+router id 94.26.24.1;
+
+define MY_ASN = 207487;
+
+define SRC_V4 = 94.26.24.1;
+define SRC_V6 = 2a14:14c0::1;
+
+protocol static node_v4 {
+	ipv4;
+	route 94.26.24.0/24 unreachable;
+}
+
+protocol static node_v6 {
+	ipv6;
+	route 2a14:14c0::/48 reject;
+}
+
