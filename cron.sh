@@ -2,7 +2,11 @@
 
 set -ex
 
-./gen_filter_irr.sh
-./gen_prefix_limits.py
+SCRIPT_DIR=$(dirname -- "$(readlink -f -- "$BASH_SOURCE")")
+cd $SCRIPT_DIR
+
+source ../envvars
+
+./gen_filters.py
 
 birdc configure

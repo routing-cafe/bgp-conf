@@ -15,3 +15,4 @@ protocol static node_v6 {
 	route 2a14:14c0::/48 reject;
 }
 
+#include "./bgp-conf/root.conf"
