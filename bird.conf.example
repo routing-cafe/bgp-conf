@@ -16,3 +16,5 @@ protocol static node_v6 {
 }
 
 #include "./bgp-conf/root.conf"
+
+#include "./peers.conf"
