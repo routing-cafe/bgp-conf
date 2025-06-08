@@ -5,16 +5,21 @@ define MY_ASN = 207487;
 define SRC_V4 = 94.26.24.1;
 define SRC_V6 = 2a14:14c0::1;
 
+include "./bgp-conf/root.conf";
+
+
 protocol static node_v4 {
 	ipv4;
-	route 94.26.24.0/24 unreachable;
+	route 94.26.24.0/24 reject {
+		bgp_large_community.add((MY_ASN, LC_INFO, INFO_SELF));
+	};
 }
 
 protocol static node_v6 {
 	ipv6;
-	route 2a14:14c0::/48 reject;
+	route 2a14:14c0::/48 reject {
+		bgp_large_community.add((MY_ASN, LC_INFO, INFO_SELF));
+	};
 }
 
-#include "./bgp-conf/root.conf"
-
-#include "./peers.conf"
+include "./peers.conf";
